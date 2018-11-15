@@ -1,0 +1,27 @@
+# ezFireAPI
+实战指挥平台rest接口
+##目录结构
+###java
+  com.kedacom.ezFireAPI
+    alarm
+      controller
+      model
+      service
+    basic
+    common
+    config
+    detection
+    duty
+    emergency
+    ez
+    law
+    outfire
+    person
+    qj
+    safe
+    social
+    Application.java
+###resources
+  mybatis.mapper
+    [mappers]
+  application.yml

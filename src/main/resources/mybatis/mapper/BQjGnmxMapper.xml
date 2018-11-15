@@ -1,0 +1,391 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kedacom.ezFireAPI.qj.dao.BQjGnmxDao">
+  <resultMap id="BaseResultMap" type="com.kedacom.ezFireAPI.qj.bean.BQjGnmx">
+    <id column="GNBH" jdbcType="VARCHAR" property="gnbh" />
+    <result column="GNMC" jdbcType="VARCHAR" property="gnmc" />
+    <result column="GNMS" jdbcType="VARCHAR" property="gnms" />
+    <result column="GNLX" jdbcType="VARCHAR" property="gnlx" />
+    <result column="GNYM" jdbcType="VARCHAR" property="gnym" />
+    <result column="GNLJ" jdbcType="VARCHAR" property="gnlj" />
+    <result column="GNCS" jdbcType="VARCHAR" property="gncs" />
+    <result column="BBLX" jdbcType="VARCHAR" property="bblx" />
+    <result column="BBXX" jdbcType="VARCHAR" property="bbxx" />
+    <result column="SSGNZ" jdbcType="VARCHAR" property="ssgnz" />
+    <result column="GNYXJ" jdbcType="DECIMAL" property="gnyxj" />
+    <result column="KFCS" jdbcType="VARCHAR" property="kfcs" />
+    <result column="LXRY" jdbcType="VARCHAR" property="lxry" />
+    <result column="LXDH" jdbcType="VARCHAR" property="lxdh" />
+    <result column="WHCS" jdbcType="VARCHAR" property="whcs" />
+    <result column="WHRY" jdbcType="VARCHAR" property="whry" />
+    <result column="WHDH" jdbcType="VARCHAR" property="whdh" />
+    <result column="XSPM" jdbcType="DECIMAL" property="xspm" />
+    <result column="QYZT" jdbcType="VARCHAR" property="qyzt" />
+    <result column="RKRY" jdbcType="VARCHAR" property="rkry" />
+    <result column="RKSJ" jdbcType="DATE" property="rksj" />
+    <result column="GXRY" jdbcType="VARCHAR" property="gxry" />
+    <result column="GXSJ" jdbcType="DATE" property="gxsj" />
+    <result column="YLZD1" jdbcType="VARCHAR" property="ylzd1" />
+    <result column="YLZD2" jdbcType="VARCHAR" property="ylzd2" />
+    <result column="YLZD3" jdbcType="VARCHAR" property="ylzd3" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    GNBH, GNMC, GNMS, GNLX, GNYM, GNLJ, GNCS, BBLX, BBXX, SSGNZ, GNYXJ, KFCS, LXRY, LXDH, 
+    WHCS, WHRY, WHDH, XSPM, QYZT, RKRY, RKSJ, GXRY, GXSJ, YLZD1, YLZD2, YLZD3
+  </sql>
+
+  <!-- 功能名称 功能编号 功能类型 版本类型 功能组编号 功能优先级 开发厂商  显示屏幕 启用状态
+  入库人员 group by(功能编号) -->
+  <select id="selectByMap" parameterType="java.util.Map" resultMap="BaseResultMap">
+    SELECT * FROM (
+    select t.* , rownum as rn from
+    (select
+    <include refid="Base_Column_List" />
+    from B_QJ_GNMX
+    where 1 = 1
+    <if test="gnmc != null and gnmc != ''">
+      AND GNMC LIKE #{gnmc,jdbcType=VARCHAR}
+    </if>
+    <if test="gnbh != null and gnbh != ''">
+      AND  GNBH = #{gnbh,jdbcType=VARCHAR}
+    </if>
+    <if test="gnlx !=null and gnlx != ''">
+      AND GNLX = #{gnlx,jdbcType=DECIMAL}
+    </if>
+    <if test="bblx !=null and bblx !=''">
+      AND BBLX = #{bblx,jdbcType=VARCHAR}
+    </if>
+    <if test="ssgnz !=null and ssgnz !=''">
+      AND SSGNZ = #{ssgnz,jdbcType=VARCHAR}
+    </if>
+    <if test="gnyxj !=null and gnyxj !=''">
+      AND GNYXJ = #{gnyxj,jdbcType=DECIMAL}
+    </if>
+    <if test="kfcs !=null and kfcs !=''">
+      AND KFCS LIKE #{kfcs,jdbcType=VARCHAR}
+    </if>
+    <if test="xspm !=null and xspm !=''">
+      AND XSPM = #{xspm,jdbcType=VARCHAR}
+    </if>
+    <if test="qyzt !=null and qyzt !=''">
+      AND QYZT = #{qyzt,jdbcType=VARCHAR}
+    </if>
+
+    <if test="rkry !=null and rkry !=''">
+      AND RKRY LIKE #{rkry,jdbcType=VARCHAR}
+    </if>
+    ORDER BY GNBH
+    ) t
+    WHERE 1 = 1
+    <if test="limit != null and limit != ''">
+      AND rownum &lt; = #{offset, jdbcType=INTEGER} + #{limit, jdbcType=INTEGER}
+    </if>
+    )
+    WHERE 1=1
+    <if test="offset != null and offset != ''">
+      AND rn &gt; #{offset, jdbcType=INTEGER}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from B_QJ_GNMX
+    where GNBH = #{gnbh,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from B_QJ_GNMX
+    where GNBH = #{gnbh,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.kedacom.ezFireAPI.qj.bean.BQjGnmx">
+    insert into B_QJ_GNMX (GNBH, GNMC, GNMS, 
+      GNLX, GNYM, GNLJ, GNCS, 
+      BBLX, BBXX, SSGNZ, 
+      GNYXJ, KFCS, LXRY, 
+      LXDH, WHCS, WHRY, WHDH, 
+      XSPM, QYZT, RKRY, RKSJ, 
+      GXRY, GXSJ, YLZD1, YLZD2, 
+      YLZD3)
+    values (#{gnbh,jdbcType=VARCHAR}, #{gnmc,jdbcType=VARCHAR}, #{gnms,jdbcType=VARCHAR}, 
+      #{gnlx,jdbcType=VARCHAR}, #{gnym,jdbcType=VARCHAR}, #{gnlj,jdbcType=VARCHAR}, #{gncs,jdbcType=VARCHAR}, 
+      #{bblx,jdbcType=VARCHAR}, #{bbxx,jdbcType=VARCHAR}, #{ssgnz,jdbcType=VARCHAR}, 
+      #{gnyxj,jdbcType=DECIMAL}, #{kfcs,jdbcType=VARCHAR}, #{lxry,jdbcType=VARCHAR}, 
+      #{lxdh,jdbcType=VARCHAR}, #{whcs,jdbcType=VARCHAR}, #{whry,jdbcType=VARCHAR}, #{whdh,jdbcType=VARCHAR}, 
+      #{xspm,jdbcType=DECIMAL}, #{qyzt,jdbcType=VARCHAR}, #{rkry,jdbcType=VARCHAR}, #{rksj,jdbcType=DATE}, 
+      #{gxry,jdbcType=VARCHAR}, #{gxsj,jdbcType=DATE}, #{ylzd1,jdbcType=VARCHAR}, #{ylzd2,jdbcType=VARCHAR}, 
+      #{ylzd3,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.kedacom.ezFireAPI.qj.bean.BQjGnmx">
+    insert into B_QJ_GNMX
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="gnbh != null">
+        GNBH,
+      </if>
+      <if test="gnmc != null">
+        GNMC,
+      </if>
+      <if test="gnms != null">
+        GNMS,
+      </if>
+      <if test="gnlx != null">
+        GNLX,
+      </if>
+      <if test="gnym != null">
+        GNYM,
+      </if>
+      <if test="gnlj != null">
+        GNLJ,
+      </if>
+      <if test="gncs != null">
+        GNCS,
+      </if>
+      <if test="bblx != null">
+        BBLX,
+      </if>
+      <if test="bbxx != null">
+        BBXX,
+      </if>
+      <if test="ssgnz != null">
+        SSGNZ,
+      </if>
+      <if test="gnyxj != null">
+        GNYXJ,
+      </if>
+      <if test="kfcs != null">
+        KFCS,
+      </if>
+      <if test="lxry != null">
+        LXRY,
+      </if>
+      <if test="lxdh != null">
+        LXDH,
+      </if>
+      <if test="whcs != null">
+        WHCS,
+      </if>
+      <if test="whry != null">
+        WHRY,
+      </if>
+      <if test="whdh != null">
+        WHDH,
+      </if>
+      <if test="xspm != null">
+        XSPM,
+      </if>
+      <if test="qyzt != null">
+        QYZT,
+      </if>
+      <if test="rkry != null">
+        RKRY,
+      </if>
+      <if test="rksj != null">
+        RKSJ,
+      </if>
+      <if test="gxry != null">
+        GXRY,
+      </if>
+      <if test="gxsj != null">
+        GXSJ,
+      </if>
+      <if test="ylzd1 != null">
+        YLZD1,
+      </if>
+      <if test="ylzd2 != null">
+        YLZD2,
+      </if>
+      <if test="ylzd3 != null">
+        YLZD3,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="gnbh != null">
+        #{gnbh,jdbcType=VARCHAR},
+      </if>
+      <if test="gnmc != null">
+        #{gnmc,jdbcType=VARCHAR},
+      </if>
+      <if test="gnms != null">
+        #{gnms,jdbcType=VARCHAR},
+      </if>
+      <if test="gnlx != null">
+        #{gnlx,jdbcType=VARCHAR},
+      </if>
+      <if test="gnym != null">
+        #{gnym,jdbcType=VARCHAR},
+      </if>
+      <if test="gnlj != null">
+        #{gnlj,jdbcType=VARCHAR},
+      </if>
+      <if test="gncs != null">
+        #{gncs,jdbcType=VARCHAR},
+      </if>
+      <if test="bblx != null">
+        #{bblx,jdbcType=VARCHAR},
+      </if>
+      <if test="bbxx != null">
+        #{bbxx,jdbcType=VARCHAR},
+      </if>
+      <if test="ssgnz != null">
+        #{ssgnz,jdbcType=VARCHAR},
+      </if>
+      <if test="gnyxj != null">
+        #{gnyxj,jdbcType=DECIMAL},
+      </if>
+      <if test="kfcs != null">
+        #{kfcs,jdbcType=VARCHAR},
+      </if>
+      <if test="lxry != null">
+        #{lxry,jdbcType=VARCHAR},
+      </if>
+      <if test="lxdh != null">
+        #{lxdh,jdbcType=VARCHAR},
+      </if>
+      <if test="whcs != null">
+        #{whcs,jdbcType=VARCHAR},
+      </if>
+      <if test="whry != null">
+        #{whry,jdbcType=VARCHAR},
+      </if>
+      <if test="whdh != null">
+        #{whdh,jdbcType=VARCHAR},
+      </if>
+      <if test="xspm != null">
+        #{xspm,jdbcType=DECIMAL},
+      </if>
+      <if test="qyzt != null">
+        #{qyzt,jdbcType=VARCHAR},
+      </if>
+      <if test="rkry != null">
+        #{rkry,jdbcType=VARCHAR},
+      </if>
+      <if test="rksj != null">
+        #{rksj,jdbcType=DATE},
+      </if>
+      <if test="gxry != null">
+        #{gxry,jdbcType=VARCHAR},
+      </if>
+      <if test="gxsj != null">
+        #{gxsj,jdbcType=DATE},
+      </if>
+      <if test="ylzd1 != null">
+        #{ylzd1,jdbcType=VARCHAR},
+      </if>
+      <if test="ylzd2 != null">
+        #{ylzd2,jdbcType=VARCHAR},
+      </if>
+      <if test="ylzd3 != null">
+        #{ylzd3,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.kedacom.ezFireAPI.qj.bean.BQjGnmx">
+    update B_QJ_GNMX
+    <set>
+      <if test="gnmc != null">
+        GNMC = #{gnmc,jdbcType=VARCHAR},
+      </if>
+      <if test="gnms != null">
+        GNMS = #{gnms,jdbcType=VARCHAR},
+      </if>
+      <if test="gnlx != null">
+        GNLX = #{gnlx,jdbcType=VARCHAR},
+      </if>
+      <if test="gnym != null">
+        GNYM = #{gnym,jdbcType=VARCHAR},
+      </if>
+      <if test="gnlj != null">
+        GNLJ = #{gnlj,jdbcType=VARCHAR},
+      </if>
+      <if test="gncs != null">
+        GNCS = #{gncs,jdbcType=VARCHAR},
+      </if>
+      <if test="bblx != null">
+        BBLX = #{bblx,jdbcType=VARCHAR},
+      </if>
+      <if test="bbxx != null">
+        BBXX = #{bbxx,jdbcType=VARCHAR},
+      </if>
+      <if test="ssgnz != null">
+        SSGNZ = #{ssgnz,jdbcType=VARCHAR},
+      </if>
+      <if test="gnyxj != null">
+        GNYXJ = #{gnyxj,jdbcType=DECIMAL},
+      </if>
+      <if test="kfcs != null">
+        KFCS = #{kfcs,jdbcType=VARCHAR},
+      </if>
+      <if test="lxry != null">
+        LXRY = #{lxry,jdbcType=VARCHAR},
+      </if>
+      <if test="lxdh != null">
+        LXDH = #{lxdh,jdbcType=VARCHAR},
+      </if>
+      <if test="whcs != null">
+        WHCS = #{whcs,jdbcType=VARCHAR},
+      </if>
+      <if test="whry != null">
+        WHRY = #{whry,jdbcType=VARCHAR},
+      </if>
+      <if test="whdh != null">
+        WHDH = #{whdh,jdbcType=VARCHAR},
+      </if>
+      <if test="xspm != null">
+        XSPM = #{xspm,jdbcType=DECIMAL},
+      </if>
+      <if test="qyzt != null">
+        QYZT = #{qyzt,jdbcType=VARCHAR},
+      </if>
+      <if test="rkry != null">
+        RKRY = #{rkry,jdbcType=VARCHAR},
+      </if>
+      <if test="rksj != null">
+        RKSJ = #{rksj,jdbcType=DATE},
+      </if>
+      <if test="gxry != null">
+        GXRY = #{gxry,jdbcType=VARCHAR},
+      </if>
+      <if test="gxsj != null">
+        GXSJ = #{gxsj,jdbcType=DATE},
+      </if>
+      <if test="ylzd1 != null">
+        YLZD1 = #{ylzd1,jdbcType=VARCHAR},
+      </if>
+      <if test="ylzd2 != null">
+        YLZD2 = #{ylzd2,jdbcType=VARCHAR},
+      </if>
+      <if test="ylzd3 != null">
+        YLZD3 = #{ylzd3,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where GNBH = #{gnbh,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.kedacom.ezFireAPI.qj.bean.BQjGnmx">
+    update B_QJ_GNMX
+    set GNMC = #{gnmc,jdbcType=VARCHAR},
+      GNMS = #{gnms,jdbcType=VARCHAR},
+      GNLX = #{gnlx,jdbcType=VARCHAR},
+      GNYM = #{gnym,jdbcType=VARCHAR},
+      GNLJ = #{gnlj,jdbcType=VARCHAR},
+      GNCS = #{gncs,jdbcType=VARCHAR},
+      BBLX = #{bblx,jdbcType=VARCHAR},
+      BBXX = #{bbxx,jdbcType=VARCHAR},
+      SSGNZ = #{ssgnz,jdbcType=VARCHAR},
+      GNYXJ = #{gnyxj,jdbcType=DECIMAL},
+      KFCS = #{kfcs,jdbcType=VARCHAR},
+      LXRY = #{lxry,jdbcType=VARCHAR},
+      LXDH = #{lxdh,jdbcType=VARCHAR},
+      WHCS = #{whcs,jdbcType=VARCHAR},
+      WHRY = #{whry,jdbcType=VARCHAR},
+      WHDH = #{whdh,jdbcType=VARCHAR},
+      XSPM = #{xspm,jdbcType=DECIMAL},
+      QYZT = #{qyzt,jdbcType=VARCHAR},
+      RKRY = #{rkry,jdbcType=VARCHAR},
+      RKSJ = #{rksj,jdbcType=DATE},
+      GXRY = #{gxry,jdbcType=VARCHAR},
+      GXSJ = #{gxsj,jdbcType=DATE},
+      YLZD1 = #{ylzd1,jdbcType=VARCHAR},
+      YLZD2 = #{ylzd2,jdbcType=VARCHAR},
+      YLZD3 = #{ylzd3,jdbcType=VARCHAR}
+    where GNBH = #{gnbh,jdbcType=VARCHAR}
+  </update>
+
+</mapper>

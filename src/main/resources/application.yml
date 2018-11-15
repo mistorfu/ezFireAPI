@@ -1,0 +1,45 @@
+es:
+#    nodes: 10.9.9.39:9200;10.9.9.40:9200
+    nodes: 172.16.233.203:9200;172.16.233.206:9200;172.16.233.222:9200;172.16.233.226:9200
+#    nodes: localhost:9200
+    userName: elastic
+    password: elastickedacom
+
+spring:
+    datasource:
+        driverClass: oracle.jdbc.driver.OracleDriver
+        url: jdbc:oracle:thin:@172.16.233.227:2521:orcl
+        username: ezview
+        password: ezview
+    redis:
+#        host: 10.9.9.25
+        host: 172.16.233.221
+        port: 7379
+        timeout: 0
+        pool:
+            maxActive: 8
+            maxWait: -1
+            maxIdle: 8
+            minIdle: 0
+    kafka:
+        bootstrap-servers: 172.16.233.203:9092,172.16.233.206:9092,172.16.233.222:9092,172.16.233.226:9092
+        producer:
+            value-serializer: org.apache.kafka.common.serialization.StringSerializer
+        consumer:
+            group-id: test1
+            auto-offset-reset: latest
+
+mybatis:
+    typeAliasesPackage: com.kedacom.ezFireAPI.**.bean
+    mapperLocations: classpath:mybatis/mapper/*.xml
+
+logging:
+    file: ../logs/ezFireAPI.log
+    level:
+       com.kedacom.ezFireAPI: DEBUG
+       org.mybatis.spring: DEBUG
+
+config:
+#    数据操作模式 1：仅es； 2:es和kafka； 3: es，kafka和redis
+    dataOperateMode: 3
+

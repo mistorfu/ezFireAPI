@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kedacom.ezFireAPI.detection.dao.BFireJygzDao">
+  <resultMap id="BaseResultMap" type="com.kedacom.ezFireAPI.detection.bean.BFireJygz">
+    <id column="GZBH" jdbcType="VARCHAR" property="gzbh" />
+    <result column="GZMC" jdbcType="VARCHAR" property="gzmc" />
+    <result column="GZLX" jdbcType="VARCHAR" property="gzlx" />
+    <result column="GZGS" jdbcType="VARCHAR" property="gzgs" />
+    <result column="GZMS" jdbcType="VARCHAR" property="gzms" />
+    <result column="CWTS" jdbcType="VARCHAR" property="cwts" />
+    <result column="RKRY" jdbcType="VARCHAR" property="rkry" />
+    <result column="RKSJ" jdbcType="DATE" property="rksj" />
+    <result column="GXRY" jdbcType="VARCHAR" property="gxry" />
+    <result column="GXSJ" jdbcType="DATE" property="gxsj" />
+    <result column="YLZD1" jdbcType="VARCHAR" property="ylzd1" />
+    <result column="YLZD2" jdbcType="VARCHAR" property="ylzd2" />
+    <result column="YLZD3" jdbcType="VARCHAR" property="ylzd3" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    GZBH, GZMC, GZLX, GZGS, GZMS, CWTS, RKRY, RKSJ, GXRY, GXSJ, YLZD1, YLZD2, YLZD3
+  </sql>
+  <select id="select" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from B_FIRE_JYGZ
+    where GZBH = #{gzbh,jdbcType=VARCHAR}
+  </select>
+
+  <!-- 规则名称 规则类型 规则编号 规则描述 入库人员 groupBy（规则编号）-->
+  <select id="selectByMap" parameterType="java.util.HashMap" resultMap="BaseResultMap">
+    SELECT * FROM (
+    select t.* , rownum as rn from
+    (select
+    <include refid="Base_Column_List" />
+    from B_FIRE_JYGZ
+    where 1 = 1
+    <if test="gzmc != null and gzmc != ''">
+      AND GZMC LIKE #{gzmc,jdbcType=VARCHAR}
+    </if>
+    <if test="gzlx != null and gzlx != ''">
+      AND GZLX = #{gzlx,jdbcType=VARCHAR}
+    </if>
+    <if test="gzbh !=null and gzbh != ''">
+      AND GZBH = #{gzbh,jdbcType=VARCHAR}
+    </if>
+    <if test="gzms !=null and gzms !=''">
+      AND GZMS LIKE #{gzms,jdbcType=VARCHAR}
+    </if>
+    <if test="rkry !=null and rkry !=''">
+      AND RKRY LIKE #{rkry,jdbcType=VARCHAR}
+    </if>
+    ORDER BY GZBH
+    ) t
+    WHERE 1 = 1
+    <if test="limit != null and limit != ''">
+      AND rownum &lt; = #{offset, jdbcType=INTEGER} + #{limit, jdbcType=INTEGER}
+    </if>
+    )
+    WHERE 1=1
+    <if test="offset != null and offset != ''">
+      AND rn &gt; #{offset, jdbcType=INTEGER}
+    </if>
+  </select>
+
+  <delete id="delete" parameterType="java.lang.String">
+    delete from B_FIRE_JYGZ
+    where GZBH = #{gzbh,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.kedacom.ezFireAPI.detection.bean.BFireJygz">
+    insert into B_FIRE_JYGZ (GZBH, GZMC, GZLX, 
+      GZGS, GZMS, CWTS, RKRY, 
+      RKSJ, GXRY, GXSJ, YLZD1, 
+      YLZD2, YLZD3)
+    values (#{gzbh,jdbcType=VARCHAR}, #{gzmc,jdbcType=VARCHAR}, #{gzlx,jdbcType=VARCHAR}, 
+      #{gzgs,jdbcType=VARCHAR}, #{gzms,jdbcType=VARCHAR}, #{cwts,jdbcType=VARCHAR}, #{rkry,jdbcType=VARCHAR}, 
+      #{rksj,jdbcType=DATE}, #{gxry,jdbcType=VARCHAR}, #{gxsj,jdbcType=DATE}, #{ylzd1,jdbcType=VARCHAR}, 
+      #{ylzd2,jdbcType=VARCHAR}, #{ylzd3,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.kedacom.ezFireAPI.detection.bean.BFireJygz">
+    insert into B_FIRE_JYGZ
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="gzbh != null">
+        GZBH,
+      </if>
+      <if test="gzmc != null">
+        GZMC,
+      </if>
+      <if test="gzlx != null">
+        GZLX,
+      </if>
+      <if test="gzgs != null">
+        GZGS,
+      </if>
+      <if test="gzms != null">
+        GZMS,
+      </if>
+      <if test="cwts != null">
+        CWTS,
+      </if>
+      <if test="rkry != null">
+        RKRY,
+      </if>
+      <if test="rksj != null">
+        RKSJ,
+      </if>
+      <if test="gxry != null">
+        GXRY,
+      </if>
+      <if test="gxsj != null">
+        GXSJ,
+      </if>
+      <if test="ylzd1 != null">
+        YLZD1,
+      </if>
+      <if test="ylzd2 != null">
+        YLZD2,
+      </if>
+      <if test="ylzd3 != null">
+        YLZD3,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="gzbh != null">
+        #{gzbh,jdbcType=VARCHAR},
+      </if>
+      <if test="gzmc != null">
+        #{gzmc,jdbcType=VARCHAR},
+      </if>
+      <if test="gzlx != null">
+        #{gzlx,jdbcType=VARCHAR},
+      </if>
+      <if test="gzgs != null">
+        #{gzgs,jdbcType=VARCHAR},
+      </if>
+      <if test="gzms != null">
+        #{gzms,jdbcType=VARCHAR},
+      </if>
+      <if test="cwts != null">
+        #{cwts,jdbcType=VARCHAR},
+      </if>
+      <if test="rkry != null">
+        #{rkry,jdbcType=VARCHAR},
+      </if>
+      <if test="rksj != null">
+        #{rksj,jdbcType=DATE},
+      </if>
+      <if test="gxry != null">
+        #{gxry,jdbcType=VARCHAR},
+      </if>
+      <if test="gxsj != null">
+        #{gxsj,jdbcType=DATE},
+      </if>
+      <if test="ylzd1 != null">
+        #{ylzd1,jdbcType=VARCHAR},
+      </if>
+      <if test="ylzd2 != null">
+        #{ylzd2,jdbcType=VARCHAR},
+      </if>
+      <if test="ylzd3 != null">
+        #{ylzd3,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateSelective" parameterType="com.kedacom.ezFireAPI.detection.bean.BFireJygz">
+    update B_FIRE_JYGZ
+    <set>
+      <if test="gzmc != null">
+        GZMC = #{gzmc,jdbcType=VARCHAR},
+      </if>
+      <if test="gzlx != null">
+        GZLX = #{gzlx,jdbcType=VARCHAR},
+      </if>
+      <if test="gzgs != null">
+        GZGS = #{gzgs,jdbcType=VARCHAR},
+      </if>
+      <if test="gzms != null">
+        GZMS = #{gzms,jdbcType=VARCHAR},
+      </if>
+      <if test="cwts != null">
+        CWTS = #{cwts,jdbcType=VARCHAR},
+      </if>
+      <if test="rkry != null">
+        RKRY = #{rkry,jdbcType=VARCHAR},
+      </if>
+      <if test="rksj != null">
+        RKSJ = #{rksj,jdbcType=DATE},
+      </if>
+      <if test="gxry != null">
+        GXRY = #{gxry,jdbcType=VARCHAR},
+      </if>
+      <if test="gxsj != null">
+        GXSJ = #{gxsj,jdbcType=DATE},
+      </if>
+      <if test="ylzd1 != null">
+        YLZD1 = #{ylzd1,jdbcType=VARCHAR},
+      </if>
+      <if test="ylzd2 != null">
+        YLZD2 = #{ylzd2,jdbcType=VARCHAR},
+      </if>
+      <if test="ylzd3 != null">
+        YLZD3 = #{ylzd3,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where GZBH = #{gzbh,jdbcType=VARCHAR}
+  </update>
+  <update id="update" parameterType="com.kedacom.ezFireAPI.detection.bean.BFireJygz">
+    update B_FIRE_JYGZ
+    set GZMC = #{gzmc,jdbcType=VARCHAR},
+      GZLX = #{gzlx,jdbcType=VARCHAR},
+      GZGS = #{gzgs,jdbcType=VARCHAR},
+      GZMS = #{gzms,jdbcType=VARCHAR},
+      CWTS = #{cwts,jdbcType=VARCHAR},
+      RKRY = #{rkry,jdbcType=VARCHAR},
+      RKSJ = #{rksj,jdbcType=DATE},
+      GXRY = #{gxry,jdbcType=VARCHAR},
+      GXSJ = #{gxsj,jdbcType=DATE},
+      YLZD1 = #{ylzd1,jdbcType=VARCHAR},
+      YLZD2 = #{ylzd2,jdbcType=VARCHAR},
+      YLZD3 = #{ylzd3,jdbcType=VARCHAR}
+    where GZBH = #{gzbh,jdbcType=VARCHAR}
+  </update>
+
+</mapper>

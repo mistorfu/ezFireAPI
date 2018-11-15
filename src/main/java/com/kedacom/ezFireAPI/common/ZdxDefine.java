@@ -1,0 +1,84 @@
+package com.kedacom.ezFireAPI.common;
+
+/**
+ * Created by fudapeng on 2018/6/5.
+ */
+public class ZdxDefine {
+    public static final String XB = "1";   // 性别
+    public static final String ZQLX = "10001";    //灾情类型
+    public static final String ZQZT = "10002";    //灾情状态
+    public static final String ZBLX = "10003";    //装备类型
+    public static final String CLZT = "10004";    //车辆状态
+    public static final String YQLB = "10005";    //舆情类别
+    public static final String WHPLB = "10006";    //危化品类别
+    public static final String ZJLY = "10007";    //专家领域
+    public static final String KBLX = "10008";    //快报类型
+    public static final String PMLX = "10009";    //泡沫类型
+    public static final String JZJG = "10010";    //建筑结构
+    public static final String NHDJ = "10011";    //耐火等级
+    public static final String JZLB = "10012";    //建筑类别
+    public static final String JZYT = "10013";    //建筑用途
+    public static final String SHDWXZ = "10014";    //石化单位性质
+    public static final String SHDWLB = "10015";    //石化单位类别
+    public static final String ZDDWFGDJ = "10016";    //重点单位分管等级
+    public static final String ZDDWDWLB = "10017";    //重点单位单位类别
+    public static final String ZDDWDWSX = "10018";    //重点单位单位属性
+    public static final String WBWCLLB = "10019";    //外保温材料类别
+    public static final String RYLX = "10020";    //人员类型
+    public static final String FXLX = "10021";    //方向类型
+    public static final String XFDZXS = "10022";    //消防队站形式
+    public static final String ZYBDLX = "10023";    //增援编队类型
+    public static final String TPLX = "10024";    //图片类型
+    public static final String MZ = "10025";    //民族
+    public static final String RYZGZT = "10026";    //人员在岗状态
+    public static final String ZW = "10027";    //职务
+    public static final String RYLB = "10028";    //人员类别
+    public static final String GW = "10029";    //岗位
+    public static final String RYZK = "10030";    //人员状况
+    public static final String RZCZMK = "10031";    //日志操作模块
+    public static final String RZCZDX = "10032";    //日志操作对象
+    public static final String RZCZLX = "10033";    //日志操作类型
+    public static final String SDBDLX = "10034";    //属地编队类型
+    public static final String YAZL = "10035";    //预案种类
+    public static final String YALX = "10036";    //预案类型
+	public static final String DZWHDJ = "10037";    //地震危害等级
+    public static final String SYLX = "10038";  //水源类型
+	public static final String SYXZ = "10039";  //水源性质
+    public static final String XFJGDWLB = "10040"; // 消防机构单位类别
+    public static final String YJLDDWLB = "10041"; // 应急联动单位类别
+    public static final String BZLB = "10042"; // 联勤保障单位保障类别
+    public static final String XL = "10043";   // 学历
+    public static final String CLLX = "10044";  //车辆类型
+	public static final String CLZZLB = "10045";  //车辆作战类别
+	public static final String RYZT = "10046";  // 人员状态
+	public static final String ZQDJ = "10047";    //灾情等级
+	public static final String QQLX = "10048"; // 请求类型
+	public static final String ZQYJ = "10049";  // 灾情预警
+	public static final String ZQYJDJ = "10050";  // 灾情预警等级
+	public static final String CLSMZT = "10051";  // 车辆生命状态
+	public static final String CLDJ = "10052";  // 车辆等级
+    public static final String TQQK = "10053"; // 天气情况
+	public static final String YWQK = "10054"; // 烟雾情况
+	public static final String FX = "10055"; // 风向
+	public static final String XFDZLB = "10056"; // 消防队站类别
+	public static final String HDJB = "10057";   //活动级别
+    public static final String LLLX = "10058";   //安保力量类型
+	public static final String WXQLB = "10059"; // 危险区类别
+    public static final String GXLB = "10060"; // 管线类别
+    public static final String SSWZ = "10061"; // 输送物质类别
+    public static final String HZWHX = "10062";  //火灾危害性
+    public static final String HZYHX = "10063";  //火灾隐患性
+    public static final String ZYDWLX = "10064";  //专业队伍类型
+    public static final String ZYDWXS = "10065";  //专业队伍形式
+    public static final String RZLX = "10066"; //日志类型
+    public static final String RZJB = "10067";  //日志级别
+    public static final String XQDLX = "10068";  //兴趣点类型
+    public static final String XFCLX = "10069";  //消防车类型
+    public static final String JYLLLX = "10070"; //救援力量类型
+    public static final String DWBZLB = "10071"; //应保单位保障类别
+    public static final String RYZZXS = "10084"; //人员作战形式
+    public static final String XHSFL = "10085"; //消火栓分类
+    public static final String XFSYFZXS = "10086"; //消防水源放置形式
+    public static final String XFSYJKXS = "10087"; //消防水源接口形式
+    public static final String XFSYGWXS = "10088"; //消防水源管网形式
+}

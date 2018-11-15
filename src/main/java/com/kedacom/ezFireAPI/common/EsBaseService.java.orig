@@ -1,0 +1,203 @@
+package com.kedacom.ezFireAPI.common;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.elasticsearch.action.DocWriteResponse;
+import org.elasticsearch.action.delete.DeleteRequest;
+import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.action.index.IndexResponse;
+import org.elasticsearch.action.search.SearchRequest;
+import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.action.update.UpdateRequest;
+import org.elasticsearch.common.xcontent.XContentType;
+import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.SearchHits;
+import org.elasticsearch.search.builder.SearchSourceBuilder;
+import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.kafka.core.KafkaTemplate;
+import redis.clients.jedis.Jedis;
+
+import java.lang.reflect.ParameterizedType;
+import java.util.*;
+
+/**
+ * Created by fudapeng on 2018/5/22.
+ */
+public abstract class EsBaseService<T> {
+    private static final Logger logger = LoggerFactory.getLogger(EsBaseService.class);
+
+    @Autowired
+    private EsClientManager esClientManager;
+
+    @Autowired
+    private KafkaTemplate kafkaTemplate;
+
+    @Autowired
+    private Jedis jedis;
+
+    @Value("${config.dataOperateMode}")
+    protected Integer dataOperateMode;
+
+    protected EsServiceConfigEnum config;
+
+    public List<T> selectByMap(Map<String, Object> params) throws Exception {
+        List<T> result = new LinkedList<T>();
+        Class<T> tClass = (Class<T>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
+        if (config.getRead() != null && !config.getRead().equals("")) {
+            BoolQueryBuilder query = QueryBuilders.boolQuery();
+            for (Map.Entry<String, Object> entry : params.entrySet()) {
+                String pattern = entry.getValue().toString();
+                if (pattern.contains("*"))
+                    //通配符查询
+                    query.must(QueryBuilders.wildcardQuery(entry.getKey().toUpperCase(), pattern));
+                else
+                    //精准查询
+                    query.must(QueryBuilders.termQuery(entry.getKey().toUpperCase(), pattern));
+            }
+            int limit = params.containsKey("limit") ? Integer.parseInt(params.get("limit").toString()) : 10;
+
+            SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder().size(limit).query(query).explain(false);
+            SearchRequest searchRequest = new SearchRequest().indices(config.getRead()).types(config.getType()).source(searchSourceBuilder);
+
+            logger.info(searchRequest.toString());
+
+            SearchResponse response = esClientManager.getClient().search(searchRequest);
+            SearchHits hits = response.getHits();
+            SearchHit[] searchHits = hits.getHits();
+            if (searchHits == null || searchHits.length == 0) {
+                return result;
+            } else {
+                for (int i = 0; i < searchHits.length; i++) {
+                    T data = (T) Utils.convertMapToObject(tClass, searchHits[i].getSource());
+                    result.add(data);
+                }
+            }
+        } else if (config.getRedisKeyPrefix() != null && !config.getRedisKeyPrefix().equals("")) {
+            String primaryKey = config.getPrimaryKey().toLowerCase();
+            String resultS = null;
+            if (params.containsKey(primaryKey)) {
+                String id = params.get(primaryKey).toString();
+                resultS = jedis.get(config.getRedisKeyPrefix() + id);
+            } else {
+                Object[] keys = jedis.keys(config.getRedisKeyPrefix() + "*").toArray();
+                if (keys.length > 0) resultS = jedis.get(keys[keys.length - 1].toString());
+            }
+            if (resultS != null) {
+                Map dataMap = new ObjectMapper().readValue(resultS, Map.class);
+                T data = (T) Utils.convertMapToObject(tClass, dataMap);
+                result.add(data);
+            }
+        }
+
+        return result;
+    }
+
+    public List<T> selectByID(String id) throws Exception {
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put(config.getPrimaryKey().toLowerCase(), id);
+        return selectByMap(params);
+    }
+
+    public String insert(T record) throws Exception {
+        Map<String, Object> dataMap = Utils.convertObjectToMap(record);
+        String id = null;
+        if (config.getPrimaryKey() != null && !config.getPrimaryKey().equals("")) {
+            id = dataMap.get(config.getPrimaryKey()).toString();
+            List<T> oriData = selectByID(id);
+            if (oriData.size() > 0) {
+                return update(record);
+            }
+        } else {
+            id = UUID.randomUUID().toString();
+        }
+
+        ObjectMapper objMapper = new ObjectMapper();
+        String recordString = objMapper.writeValueAsString(dataMap);
+        if (config.getWrite() != null && !config.getWrite().equals("")) {
+            IndexRequest request = new IndexRequest(config.getWrite(), config.getType());
+            request.source(recordString, XContentType.JSON);
+            request.id(id);
+            logger.info(request.toString());
+            IndexResponse resp = esClientManager.getClient().index(request);
+
+            if (resp.getResult() != DocWriteResponse.Result.CREATED) {
+                throw new RuntimeException("insert failed.");
+            }
+        }
+
+        if (dataOperateMode > 1) {
+            sendKafkaMessage(id, KafkaMessage.OPERA_ADD, recordString);
+        }
+        if (dataOperateMode > 2 && config.getRedisKeyPrefix() != null && !config.getRedisKeyPrefix().equals("")) {
+            jedis.set(config.getRedisKeyPrefix() + id, recordString);
+        }
+
+        return "created";
+    }
+
+    public String update(T record) throws Exception {
+        Map<String, Object> dataMap = Utils.convertObjectToMap(record);
+        String id = dataMap.get(config.getPrimaryKey()).toString();
+        List<T> oriData = selectByID(id);
+        if (oriData.size() != 1) {
+            throw new RuntimeException("data not found.");
+        }
+
+        String recordString = new ObjectMapper().writeValueAsString(dataMap);
+        if (config.getWrite() != null && !config.getWrite().equals("")) {
+            UpdateRequest request = new UpdateRequest(config.getWrite(), config.getType(), id);
+            request.doc(recordString, XContentType.JSON);
+            logger.info(request.toString());
+            esClientManager.getClient().update(request);
+        }
+
+        if (dataOperateMode > 1) {
+            sendKafkaMessage(id, KafkaMessage.OPERA_MOD, recordString);
+        }
+        if (dataOperateMode > 2 && config.getRedisKeyPrefix() != null && !config.getRedisKeyPrefix().equals("")) {
+            jedis.set(config.getRedisKeyPrefix() + id, recordString);
+        }
+
+        return "updated";
+    }
+
+    public String delete(T record) throws Exception {
+        Map<String, Object> dataMap = Utils.convertObjectToMap(record);
+        String id = dataMap.get(config.getPrimaryKey()).toString();
+        String recordString = new ObjectMapper().writeValueAsString(dataMap);
+
+        if (config.getWrite() != null && !config.getWrite().equals("")) {
+            DeleteRequest dr = new DeleteRequest(config.getWrite(), config.getType(), id);
+            logger.info(dr.toString());
+            esClientManager.getClient().delete(dr);
+        }
+
+        if (dataOperateMode > 1) {
+            sendKafkaMessage(id, KafkaMessage.OPERA_DEL, recordString);
+        }
+        if (dataOperateMode > 2 && config.getRedisKeyPrefix() != null && !config.getRedisKeyPrefix().equals("")) {
+            jedis.del(config.getRedisKeyPrefix() + id);
+        }
+
+        return "deleted";
+    }
+
+    private void sendKafkaMessage(String xxbh, String czlx, String xxnr) throws Exception {
+        if (config.getKafkaTopic() != null && !config.getKafkaTopic().equals("")) {
+            KafkaMessage msg = new KafkaMessage();
+            msg.setXxbh(xxbh);
+            msg.setXxlb(config.getType());
+            msg.setXxdx(config.getIndex() + ":" + config.getType());
+            msg.setXxnr(xxnr);
+            msg.setXxly("ezFireAPI");
+            msg.setCzlx(czlx);
+            msg.setCzsj(DateTime.now().toString("yyyy-MM-dd HH:mm:ss"));
+            kafkaTemplate.send(config.getKafkaTopic(), xxbh, new ObjectMapper().writeValueAsString(Utils.convertObjectToMap(msg)));
+        }
+    }
+}

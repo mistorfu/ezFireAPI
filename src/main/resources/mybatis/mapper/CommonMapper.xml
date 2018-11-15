@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kedacom.ezFireAPI.common.dao.CommonDao">
+
+    <resultMap id="TempZdxResult" type="com.kedacom.ezFireAPI.outfire.model.TempDxlb">
+        <result column="keyId" jdbcType="VARCHAR" property="key"/>
+        <result column="zdbh" jdbcType="VARCHAR" property="id"/>
+        <result column="zdmc" jdbcType="VARCHAR" property="value"/>
+        <result column="nbbm" jdbcType="VARCHAR" property="chain"/>
+    </resultMap>
+
+    <resultMap id="XzqhResult" type="com.kedacom.ezFireAPI.outfire.model.InnerXzqh">
+        <result column="xzbm" jdbcType="VARCHAR" property="xzqhbh"/>
+        <result column="xzmc" jdbcType="VARCHAR" property="xzqhmc"/>
+        <result column="xznbbm" jdbcType="VARCHAR" property="xzqhnbbm"/>
+    </resultMap>
+
+    <select id="getAllXzqh" resultMap="XzqhResult">
+        SELECT xzbm,xzmc,xznbbm FROM B_QJ_XZQY
+    </select>
+
+    <select id="getAllDxlb" resultMap="TempZdxResult">
+        SELECT zdbh,zdmc,nbbm,(zdlx||zdbh) AS keyId FROM B_QJ_ZDX
+    </select>
+
+    <select id="getXtpz" resultType="java.util.HashMap">
+        SELECT * FROM B_QJ_XTPZ
+        WHERE 1=1
+        <if test="blm != null and blm != ''">
+            AND BLM = #{blm, jdbcType=VARCHAR}
+        </if>
+    </select>
+</mapper>
